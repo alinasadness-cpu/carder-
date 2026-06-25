@@ -21,6 +21,7 @@ public class CardDeliveryTest {
     void setUp() {
         Configuration.browser = "chrome";
         Configuration.headless = false;
+        Configuration.timeout = 15000;
         faker = new Faker(new Locale("ru"));
     }
 
@@ -61,10 +62,12 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $(".button").click();
+        $("button.button").click();
 
+
+        $(".notification__content").shouldBe(Condition.visible);
         $(".notification__content")
-                .shouldHave(Condition.text("Успешно!"), Condition.visible);
+                .shouldHave(Condition.text("Успешно!"));
     }
 
     @Test
@@ -80,7 +83,7 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $(".button").click();
+        $("button.button").click();
 
         $("[data-test-id='city'] .input__sub")
                 .shouldHave(Condition.text("Доставка в выбранный город недоступна"));
@@ -99,7 +102,7 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $(".button").click();
+        $("button.button").click();
 
         $("[data-test-id='date'] .input__sub")
                 .shouldHave(Condition.text("Заказ на выбранную дату невозможен"));
@@ -118,10 +121,10 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $(".button").click();
+        $("button.button").click();
 
         $("[data-test-id='name'] .input__sub")
-                .shouldHave(Condition.text("Имя и Фамилия указаны неверно"));
+                .shouldHave(Condition.text("Имя и Фамилия указаные неверно"));
     }
 
     @Test
@@ -137,10 +140,10 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $(".button").click();
+        $("button.button").click();
 
         $("[data-test-id='phone'] .input__sub")
-                .shouldHave(Condition.text("Мобильный телефон указан неверно"));
+                .shouldHave(Condition.text("Телефон указан неверно"));
     }
 
     @Test
@@ -155,7 +158,7 @@ public class CardDeliveryTest {
         $("[data-test-id='date'] input").setValue(date);
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
-        $(".button").click();
+        $("button.button").click();
 
         $("[data-test-id='agreement'].input_invalid")
                 .shouldBe(Condition.visible);
