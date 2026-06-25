@@ -26,9 +26,7 @@ public class CardDeliveryTest {
     }
 
     private String generateDate(int daysToAdd) {
-        return LocalDate.now()
-                .plusDays(daysToAdd)
-                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        return LocalDate.now().plusDays(daysToAdd).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     private String generateName() {
@@ -62,12 +60,9 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $("button.button").click();
+        $(".button").click();
 
-
-        $(".notification__content").shouldBe(Condition.visible);
-        $(".notification__content")
-                .shouldHave(Condition.text("Успешно!"));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована"));
     }
 
     @Test
@@ -83,10 +78,9 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $("button.button").click();
+        $(".button").click();
 
-        $("[data-test-id='city'] .input__sub")
-                .shouldHave(Condition.text("Доставка в выбранный город недоступна"));
+        $("[data-test-id='city'] .input__sub").shouldHave(Condition.text("Доставка в выбранный город недоступна"));
     }
 
     @Test
@@ -102,10 +96,9 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $("button.button").click();
+        $(".button").click();
 
-        $("[data-test-id='date'] .input__sub")
-                .shouldHave(Condition.text("Заказ на выбранную дату невозможен"));
+        $("[data-test-id='date'] .input__sub").shouldHave(Condition.text("Заказ на выбранную дату невозможен"));
     }
 
     @Test
@@ -121,10 +114,9 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $("button.button").click();
+        $(".button").click();
 
-        $("[data-test-id='name'] .input__sub")
-                .shouldHave(Condition.text("Имя и Фамилия указаные неверно"));
+        $("[data-test-id='name'] .input__sub").shouldHave(Condition.text("Имя и Фамилия указаные неверно"));
     }
 
     @Test
@@ -140,10 +132,9 @@ public class CardDeliveryTest {
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
         $("[data-test-id='agreement']").click();
-        $("button.button").click();
+        $(".button").click();
 
-        $("[data-test-id='phone'] .input__sub")
-                .shouldHave(Condition.text("Телефон указан неверно"));
+        $("[data-test-id='phone'] .input__sub").shouldHave(Condition.text("Телефон указан неверно"));
     }
 
     @Test
@@ -158,9 +149,86 @@ public class CardDeliveryTest {
         $("[data-test-id='date'] input").setValue(date);
         $("[data-test-id='name'] input").setValue(name);
         $("[data-test-id='phone'] input").setValue(phone);
-        $("button.button").click();
+        $(".button").click();
 
-        $("[data-test-id='agreement'].input_invalid")
-                .shouldBe(Condition.visible);
+        $("[data-test-id='agreement'].input_invalid").shouldBe(Condition.visible);
+    }
+
+    @Test
+    void shouldSelectCityFromDropdown() {
+        String city = "Казань";
+        String name = generateName();
+        String phone = generatePhone();
+        String date = generateDate(7);
+
+        $("[data-test-id='city'] input").setValue("Ка");
+        $(".menu-item__control").shouldBe(Condition.visible);
+        $$(".menu-item__control").findBy(Condition.text(city)).click();
+
+        clearDateField();
+        $("[data-test-id='date'] input").setValue(date);
+        $("[data-test-id='name'] input").setValue(name);
+        $("[data-test-id='phone'] input").setValue(phone);
+        $("[data-test-id='agreement']").click();
+        $(".button").click();
+
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована"));
+    }
+
+    @Test
+    void shouldSelectDateFromCalendar() {
+        String city = "Москва";
+        String name = generateName();
+        String phone = generatePhone();
+
+        LocalDate targetDate = LocalDate.now().plusDays(7);
+        String day = String.valueOf(targetDate.getDayOfMonth());
+        String monthYear = targetDate.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+
+        $("[data-test-id='city'] input").setValue(city);
+        $("[data-test-id='date'] input").click();
+
+        while (!$(".calendar__month").getText().equals(monthYear)) {
+            $("[data-step='1']").click();
+        }
+
+        $$(".calendar__day").findBy(Condition.text(day)).click();
+
+        $("[data-test-id='name'] input").setValue(name);
+        $("[data-test-id='phone'] input").setValue(phone);
+        $("[data-test-id='agreement']").click();
+        $(".button").click();
+
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована"));
+    }
+
+    @Test
+    void shouldSelectCityAndDateFromDropdownAndCalendar() {
+        String city = "Екатеринбург";
+        String name = generateName();
+        String phone = generatePhone();
+
+        LocalDate targetDate = LocalDate.now().plusDays(14);
+        String day = String.valueOf(targetDate.getDayOfMonth());
+        String monthYear = targetDate.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+
+        $("[data-test-id='city'] input").setValue("Ек");
+        $(".menu-item__control").shouldBe(Condition.visible);
+        $$(".menu-item__control").findBy(Condition.text(city)).click();
+
+        $("[data-test-id='date'] input").click();
+
+        while (!$(".calendar__month").getText().equals(monthYear)) {
+            $("[data-step='1']").click();
+        }
+
+        $$(".calendar__day").findBy(Condition.text(day)).click();
+
+        $("[data-test-id='name'] input").setValue(name);
+        $("[data-test-id='phone'] input").setValue(phone);
+        $("[data-test-id='agreement']").click();
+        $(".button").click();
+
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована"));
     }
 }
