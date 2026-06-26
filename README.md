@@ -16,9 +16,7 @@
 
 ## Запуск
 
-1. Запустить SUT: `java -jar artifacts/app-card-delivery.jar`
-2. Запустить тесты: `./gradlew test --info`
+### 1. Запустить SUT
 
-## Документация по дефектам
-
-- [Issue #1](ссылка на ваш issue) - Невалидная дата проходит валидацию
+```bash
+java -jar artifacts/app-card-delivery.jar
