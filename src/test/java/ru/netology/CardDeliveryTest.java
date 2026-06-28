@@ -20,9 +20,6 @@ public class CardDeliveryTest {
 
     @BeforeEach
     void setUp() {
-        Configuration.browser = "chrome";
-        Configuration.headless = false;
-        Configuration.timeout = 15000;
         faker = new Faker(new Locale("ru"));
     }
 
@@ -164,5 +161,28 @@ public class CardDeliveryTest {
 
         $("[data-test-id='agreement'].input_invalid")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15));
+    }
+
+    @Test
+    void shouldSelectCityFromDropdown() {
+        String city = "Казань";
+        String name = generateName();
+        String phone = generatePhone();
+        String date = generateDate(7);
+
+        $("[data-test-id='city'] input").setValue("Ка");
+        $(".menu-item__control").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $$(".menu-item__control").findBy(Condition.text(city)).click();
+
+        clearDateField();
+        $("[data-test-id='date'] input").setValue(date);
+        $("[data-test-id='name'] input").setValue(name);
+        $("[data-test-id='phone'] input").setValue(phone);
+        $("[data-test-id='agreement']").click();
+        $(".button").click();
+
+        $(".notification__content")
+                .shouldBe(Condition.visible, Duration.ofSeconds(15))
+                .shouldHave(Condition.exactText("Встреча успешно забронирована на " + date));
     }
 }
